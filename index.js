@@ -6,6 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const http = require('http');
 require('dotenv').config({ path: __dirname + '/config/.env' }); // Load .env file contents into process.env
 require("./config/db")
 
@@ -18,6 +19,15 @@ app.use(bodyParser.json());
 
 app.use(userAuthrouter)
 app.use(router);
+
+const socketserver = http.createServer(app)
+socketserver.listen(3001, () => {
+  console.log('Socket server is running on port 3001')
+})
+const {socketConnection} = require('./services/socket');
+
+socketConnection(socketserver)
+
 
 app.get('/api/error', (req, res) => {
   // Intentionally throw an error

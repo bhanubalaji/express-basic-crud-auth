@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const http = require('http');
+const cors = require('cors');
 require('dotenv').config({ path: __dirname + '/config/.env' }); // Load .env file contents into process.env
 require("./config/db")
 
@@ -15,6 +16,26 @@ require("./config/db")
 app.use(express.json()) // For parsing application/json
 app.use(cookieParser());
 app.use(bodyParser.json());
+const corsOptions = {
+  origin: 'http://localhost:4201', // Your frontend origin
+  credentials: true, // Allow credentials (cookies, authorization headers, TLS client certificates)
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers you allow
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Methods you allow
+};
+
+
+app.use(cors(corsOptions));
+app.use(function (req, res, next) {
+  const allowedOrgins = ['http://localhost:4200', 'http://localhost:4201'];
+  const origin = req.headers.origin;
+  if (allowedOrgins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next();
+})
 
 
 app.use(userAuthrouter)
@@ -42,6 +63,8 @@ app.use((err, req, res, next) => {
 });
 
 
+const {graphqlserver} = require('./graphql/grahql');
+graphqlserver(app)
 
 
  // ------------practice sample error handles---------------------

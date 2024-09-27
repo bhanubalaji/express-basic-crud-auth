@@ -1,9 +1,9 @@
 
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
+const DetailsModel = require('../models/graphql');
 
 const graphqlserver = (app) => {
-  const DetailsModel = require('../models/graphql');
 
   // Define a schema
   const schema = buildSchema(`

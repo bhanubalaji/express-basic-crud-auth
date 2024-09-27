@@ -25,7 +25,6 @@ socketserver.listen(3001, () => {
   console.log('Socket server is running on port 3001')
 })
 const {socketConnection} = require('./services/socket');
-
 socketConnection(socketserver)
 
 
